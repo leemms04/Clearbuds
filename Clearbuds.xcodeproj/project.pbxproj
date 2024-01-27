@@ -12,6 +12,7 @@
 		0C9285092B5B81E4003CBA90 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9285082B5B81E4003CBA90 /* ContentView.swift */; };
 		0C92850B2B5B81E6003CBA90 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C92850A2B5B81E6003CBA90 /* Assets.xcassets */; };
 		0C92850E2B5B81E6003CBA90 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C92850D2B5B81E6003CBA90 /* Preview Assets.xcassets */; };
+		91BEBA1A2B632F5D00F2363C /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91BEBA192B632F5D00F2363C /* AudioRecorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		0C9285082B5B81E4003CBA90 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0C92850A2B5B81E6003CBA90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0C92850D2B5B81E6003CBA90 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		91BEBA192B632F5D00F2363C /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				0C9285082B5B81E4003CBA90 /* ContentView.swift */,
 				0C92850A2B5B81E6003CBA90 /* Assets.xcassets */,
 				0C92850C2B5B81E6003CBA90 /* Preview Content */,
+				91BEBA192B632F5D00F2363C /* AudioRecorder.swift */,
 			);
 			path = Clearbuds;
 			sourceTree = "<group>";
@@ -143,6 +146,7 @@
 			files = (
 				0C9285092B5B81E4003CBA90 /* ContentView.swift in Sources */,
 				0C9285072B5B81E4003CBA90 /* ClearbudsApp.swift in Sources */,
+				91BEBA1A2B632F5D00F2363C /* AudioRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +280,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Clearbuds/Preview Content\"";
-				DEVELOPMENT_TEAM = 8WR6JL6JZR;
+				DEVELOPMENT_TEAM = 9Z8YBLDHKU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -305,7 +309,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Clearbuds/Preview Content\"";
-				DEVELOPMENT_TEAM = 8WR6JL6JZR;
+				DEVELOPMENT_TEAM = 9Z8YBLDHKU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

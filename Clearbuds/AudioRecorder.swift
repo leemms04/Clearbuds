@@ -5,50 +5,60 @@
 //  Created by Truong Le on 25/01/2024.
 //
 
-import Foundation
-import SwiftUI
 import AVFoundation
 
 class AudioRecorder: ObservableObject {
     private var audioRecorder: AVAudioRecorder?
-    @Published var isRecording = false
+    private var audioPlayer: AVAudioPlayer?
 
-    func toggleRecording() {
-        if isRecording {
-            stopRecording()
-        } else {
-            startRecording()
+    init() {
+        setupAudioRecorder()
+    }
+
+    func startRecording() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try AVAudioSession.sharedInstance().setActive(true)
+
+            audioRecorder?.record()
+        } catch {
+            print("Error starting recording: \(error.localizedDescription)")
         }
     }
 
-    private func startRecording() {
-        let audioSession = AVAudioSession.sharedInstance()
+    func stopRecording() {
+        audioRecorder?.stop()
+    }
+
+    func playRecording() {
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: getDocumentsDirectory().appendingPathComponent("recording.wav"))
+            audioPlayer?.play()
+        } catch {
+            print("Error playing recording: \(error.localizedDescription)")
+        }
+    }
+
+    private func setupAudioRecorder() {
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.wav")
+
+        let settings: [String: Any] = [
+            AVFormatIDKey: kAudioFormatLinearPCM,
+            AVSampleRateKey: 44100.0,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
 
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .default)
-            try audioSession.setActive(true)
-
-            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioFilename = documentsPath.appendingPathComponent("audioRecording.wav")
-
-            let settings: [String: Any] = [
-                AVFormatIDKey: kAudioFormatLinearPCM,
-                AVSampleRateKey: 44100.0,
-                AVNumberOfChannelsKey: 1,
-                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-            ]
-
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder?.prepareToRecord()
-            audioRecorder?.record()
-            isRecording = true
         } catch {
-            print("Error setting up audio recording: \(error.localizedDescription)")
+            print("Error setting up audio recorder: \(error.localizedDescription)")
         }
     }
 
-    private func stopRecording() {
-        audioRecorder?.stop()
-        isRecording = false
+    private func getDocumentsDirectory() -> URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 }
+

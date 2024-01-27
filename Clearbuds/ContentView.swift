@@ -6,44 +6,95 @@
 //
 
 import SwiftUI
-import AVKit
+import AVFoundation
 
 struct ContentView: View {
-  @State var audioPlayer: AVAudioPlayer!
-  var body: some View {
-    ZStack {
-      VStack {
-        Text("Clearbuds").font(.system(size: 45)).font(.largeTitle)
-        HStack {
-          Spacer()
-          Button(action: {
-              self.audioPlayer.play()
-          }) {
-              Image(systemName: "play.circle.fill").resizable()
-                  .frame(width: 70, height: 70)
-                .aspectRatio(contentMode: .fit)
-                  .foregroundColor(Color(red: 0.4627, green: 0.8392, blue: 1.0))
-          }
-          Spacer()
-          Button(action: {
-              self.audioPlayer.pause()
-          }) {
-              Image(systemName: "pause.circle.fill").resizable()
-                  .frame(width: 70, height: 70)
-                .aspectRatio(contentMode: .fit)
-                .foregroundColor(Color(red: 0.4627, green: 0.8392, blue: 1.0))
-          }
-          Spacer()
+    @State private var audioRecorder: AudioRecorder?
+
+    var body: some View {
+        VStack {
+            RecordButton(action: startRecording, label: "Start Recording")
+            StopButton(action: stopRecording, label: "Stop Recording")
+            PlayButton(action: playRecording, label: "Play Recording")
         }
-      }
+        .onAppear {
+            self.setupAudioSession()
+        }
     }
-    .onAppear {
-      let sound = Bundle.main.path(forResource: "song", ofType: "mp3")
-      self.audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: sound!))
+
+    private func setupAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Error setting up audio session: \(error.localizedDescription)")
+        }
     }
-  }
+
+    private func startRecording() {
+        audioRecorder = AudioRecorder()
+        audioRecorder?.startRecording()
+    }
+
+    private func stopRecording() {
+        audioRecorder?.stopRecording()
+    }
+
+    private func playRecording() {
+        audioRecorder?.playRecording()
+    }
 }
 
-#Preview {
-  ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+struct RecordButton: View {
+    let action: () -> Void
+    let label: String
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .padding()
+                .foregroundColor(.white)
+                .background(Color.red)
+                .cornerRadius(10)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct StopButton: View {
+    let action: () -> Void
+    let label: String
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .padding()
+                .foregroundColor(.white)
+                .background(Color.blue)
+                .cornerRadius(10)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct PlayButton: View {
+    let action: () -> Void
+    let label: String
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .padding()
+                .foregroundColor(.white)
+                .background(Color.green)
+                .cornerRadius(10)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
 }

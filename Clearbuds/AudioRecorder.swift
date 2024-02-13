@@ -21,6 +21,8 @@ class AudioRecorder: ObservableObject {
             try AVAudioSession.sharedInstance().setActive(true)
 
             audioRecorder?.record()
+            playRecording()
+            
         } catch {
             print("Error starting recording: \(error.localizedDescription)")
         }

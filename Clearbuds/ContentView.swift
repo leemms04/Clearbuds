@@ -102,12 +102,13 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
+    var filename: String = "test"
+    // create an audioManager and set up AudioSession
     @StateObject private var audioManager = AudioManager()
-
     var body: some View {
         VStack {
             RecordButton(action: {
-                audioManager.startRecording(filename: "song")
+                audioManager.startRecording(filename: filename)
             }, label: "Start Recording")
 
             StopButton(action: {

@@ -9,7 +9,9 @@
 import SwiftUI
 import AVFoundation
 import Accelerate
-
+/**
+ This file create contains the AudioManager record audio and play loopback the audio.
+ */
 class AudioManager: NSObject, ObservableObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     var audioSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
@@ -17,84 +19,68 @@ class AudioManager: NSObject, ObservableObject, AVAudioRecorderDelegate, AVAudio
 
     override init() {
         super.init()
-        setupAudioRecorder(filename: "song")
+        setupAudioSession()
     }
-    func setupAudioRecorder(filename: String) {
-        audioSession = AVAudioSession.sharedInstance()
+    // Set up AudioSession
+    private func setupAudioSession() {
+        let audioSession = AVAudioSession.sharedInstance()
         do {
-            try
-                // play and record allows speaker and mic to be on at the same time
-                audioSession.setCategory(AVAudioSession.Category.playAndRecord, mode: audioSession.mode, options: AVAudioSession.CategoryOptions.defaultToSpeaker)
-            
-            // creates file path to save audio file
-            let url = NSURL(fileURLWithPath: getDocumentsDirectory().absoluteString).appendingPathComponent(filename)
-            
-            // settings, including the sampling rate of 48khz
-            // # channels
-            // bit depth (# bits used to encode each sample)
-            let recordSettings:[String:Any] = [AVFormatIDKey:kAudioFormatLinearPCM,
-                                               AVSampleRateKey:48000.0,
-                                               AVNumberOfChannelsKey:1,
-                                               AVLinearPCMIsNonInterleaved: true,
-                                               AVLinearPCMBitDepthKey: 16]
-            
-            // initialize audio recorder and session
-            try audioRecorder = AVAudioRecorder(url:url!, settings: recordSettings)
-            audioRecorder?.prepareToRecord()
-
-
-            
-        }catch let error {
-            print("ERROR")
-            print(error.localizedDescription)
+            // play and record allows speaker and mic to be on at the same time
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error.localizedDescription)")
         }
     }
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0]
+    // Set up Audio Recorder to record audio to filename.wav
+    func setupAudioRecorder(filename: String) {
+        // get the dir to filename in the current device
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(filename).wav")
+        
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatLinearPCM),
+            AVSampleRateKey: 48000.0,
+            AVNumberOfChannelsKey: 1,
+            AVLinearPCMIsNonInterleaved: true,
+            AVLinearPCMBitDepthKey: 16
+        ] as [String : Any]
+
+        do {
+            audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+            audioRecorder?.prepareToRecord()
+            print("Set up filename successfully \(audioFilename)")
+        } catch {
+            print("Failed to set up audio recorder: \(error.localizedDescription)")
+        }
+    }
+    private func getDocumentsDirectory() -> URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
 
     func startRecording(filename: String) {
+        setupAudioRecorder(filename: filename)
+        audioRecorder?.record() // true
+        playSound(filename: filename)
+    }
+    private func playSound(filename: String) {
+        
+        let url = getDocumentsDirectory().appendingPathComponent("\(filename).wav")
+        // debug
+        print("Filepath: \(url)")
+
         do {
-            audioRecorder.prepareToRecord()
-            
-            try audioSession.setActive(true)
-            
-            audioRecorder.record()
-            
-            // read audio file to be played
-            guard let chirpurl = Bundle.main.url(forResource: "test", withExtension: "wav") else { return }
-            
-            player = try AVAudioPlayer(contentsOf: chirpurl, fileTypeHint: AVFileType.mp3.rawValue)
-            
-//            // sets the volume, make sure phone is not on silent mode and external volume switch has volume up
-//            guard let player = player else { return }
-//            player.volume=0.01
-            
+            player = try AVAudioPlayer(contentsOf: url)
             player?.play()
-            
-//            // important, need to sleep main thread while speaker is playing, otherwise
-//            // it will directly execute the next step without waiting for file to finish playing
-//            sleep(1)
-//            
-//            audioRecorder.stop()
-//            player.stop()
-//            try audioSession.setActive(false)
-        }catch let error {
-            print("ERROR")
-            print(error.localizedDescription)
+            print("Play audio")
+        } catch {
+            print("Failed to play sound: \(error.localizedDescription)")
         }
     }
 
-
     func stopRecording() {
         audioRecorder.stop()
-        do {
-            try audioSession.setActive(false)
-        } catch let error {
-            print("ERROR")
-            print(error.localizedDescription)
-        }
+        player?.stop()
+        print("Stop recording")
     }
     
 }

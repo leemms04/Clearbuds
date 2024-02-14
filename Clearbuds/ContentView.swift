@@ -107,7 +107,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             RecordButton(action: {
-                audioManager.startRecording()
+                audioManager.startRecording(filename: "song")
             }, label: "Start Recording")
 
             StopButton(action: {
